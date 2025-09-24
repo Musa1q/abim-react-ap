@@ -14,7 +14,7 @@ const CourseEditPage = () => {
     mainTitle: '',
     subtitle: '',
     imageUrl: '',
-    dersGunleri: [], // Array olarak değiştirdik
+    dersGunleri: [], 
     dersSaati: '',
     content: {
       egitimSuresi: [
@@ -40,12 +40,8 @@ const CourseEditPage = () => {
       setIsLoading(true);
       const course = await getCourseById(id);
       if (course) {
-        // Time formatını düzelt (HH:MM:SS -> HH:MM)
-        const formattedCourse = {
-          ...course,
-          dersSaati: course.dersSaati ? course.dersSaati.substring(0, 5) : ''
-        };
-        setFormData(formattedCourse);
+        // Backend zaten doğru formatta veri gönderiyor
+        setFormData(course);
       }
     } catch (error) {
       console.error('Kurs yüklenirken hata:', error);
@@ -128,10 +124,23 @@ const CourseEditPage = () => {
       setIsSaving(true);
       setError('');
       
+      // Form verisini backend formatına dönüştür
+      const courseData = {
+        mainTitle: formData.mainTitle,
+        subtitle: formData.subtitle,
+        imageUrl: formData.imageUrl,
+        dersGunleri: formData.dersGunleri,
+        dersSaati: formData.dersSaati,
+        content: {
+          egitimSuresi: formData.content.egitimSuresi,
+          mufredat: formData.content.mufredat
+        }
+      };
+      
       if (isEdit) {
-        await updateCourse(id, formData);
+        await updateCourse(id, courseData);
       } else {
-        await addCourse(formData);
+        await addCourse(courseData);
       }
       
       navigate('/admin/courses');

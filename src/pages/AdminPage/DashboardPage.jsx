@@ -14,85 +14,149 @@ import {
   FaGraduationCap
 } from 'react-icons/fa';
 import { getCourses } from '../../services/courseService';
+import { getStats, getActivities } from '../../services/statsService';
 
 const DashboardPage = () => {
   const [stats, setStats] = useState({
     totalStudents: 0,
     totalCourses: 0,
     totalBlogs: 0,
-    totalViews: 0
+    totalViews: 0,
+    studentGrowthRate: 0
   });
   const [recentActivities, setRecentActivities] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [lastActivityCount, setLastActivityCount] = useState(0);
+  const [hasNewActivity, setHasNewActivity] = useState(false);
+
+  // Bildirim fonksiyonları
+  const showNotification = (title, message) => {
+    if (Notification.permission === 'granted') {
+      new Notification(title, {
+        body: message,
+        icon: '/abim-logo.png',
+        badge: '/abim-logo.png'
+      });
+    }
+  };
+
+  const playNotificationSound = () => {
+    // Basit bir bildirim sesi oluştur
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+    oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.1);
+    oscillator.frequency.setValueAtTime(800, audioContext.currentTime + 0.2);
+    
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+    
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.3);
+  };
+
+  // Bildirim izni iste
+  useEffect(() => {
+    if (Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+  }, []);
+
+  // Otomatik güncelleme interval'ı
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchStats();
+    }, 30000); // 30 saniyede bir güncelle
+
+    return () => clearInterval(interval);
+  }, [lastActivityCount]);
+
+  const fetchStats = async () => {
+    try {
+      setIsLoading(true);
+      
+      // Aktif kurs sayısını çek
+      const courses = await getCourses();
+      const activeCoursesCount = courses.length;
+
+      // Gerçek verileri çek
+      const realStats = await getStats();
+      const realActivities = await getActivities();
+      
+      const statsData = {
+        totalStudents: realStats.students,
+        totalCourses: activeCoursesCount,
+        totalBlogs: realStats.blogs,
+        totalViews: 2847,
+        studentGrowthRate: realStats.studentGrowthRate
+      };
+
+      // Aktiviteleri icon mapping ile dönüştür
+      const activitiesWithIcons = realActivities.map(activity => ({
+        ...activity,
+        icon: activity.icon === 'FaUsers' ? FaUsers : 
+              activity.icon === 'FaNewspaper' ? FaNewspaper : 
+              activity.icon === 'FaBook' ? FaBook : FaEye
+      }));
+
+      setStats(statsData);
+      setRecentActivities(activitiesWithIcons);
+      
+      // Yeni aktivite kontrolü
+      if (activitiesWithIcons.length > lastActivityCount && lastActivityCount > 0) {
+        // Yeni aktivite var, bildirim göster
+        showNotification('Yeni aktivite!', 'Yeni bir aktivite eklendi.');
+        playNotificationSound();
+        setHasNewActivity(true);
+        
+        // 5 saniye sonra yeni aktivite göstergesini kaldır
+        setTimeout(() => setHasNewActivity(false), 5000);
+      }
+      setLastActivityCount(activitiesWithIcons.length);
+    } catch (error) {
+      console.error('İstatistikler yüklenirken hata:', error);
+      // Hata durumunda mock data kullan
+      const mockStats = {
+        totalStudents: 156,
+        totalCourses: 0,
+        totalBlogs: 0,
+        totalViews: 2847
+      };
+      
+      const mockActivities = [
+        {
+          id: 1,
+          type: 'student',
+          message: 'Yeni öğrenci kaydı: Ahmet Yılmaz',
+          time: '2 saat önce',
+          icon: FaUsers,
+          color: 'text-blue-500',
+          bgColor: 'bg-blue-50'
+        },
+        {
+          id: 2,
+          type: 'blog',
+          message: 'Yeni blog yazısı yayınlandı: "React Hooks"',
+          time: '4 saat önce',
+          icon: FaNewspaper,
+          color: 'text-green-500',
+          bgColor: 'bg-green-50'
+        }
+      ];
+      
+      setStats(mockStats);
+      setRecentActivities(mockActivities);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        setIsLoading(true);
-        
-        // Aktif kurs sayısını çek
-        const courses = await getCourses();
-        const activeCoursesCount = courses.length;
-
-        const mockStats = {
-          totalStudents: 156,
-          totalCourses: activeCoursesCount,
-          totalBlogs: 24,
-          totalViews: 2847
-        };
-
-        const mockActivities = [
-          {
-            id: 1,
-            type: 'student',
-            message: 'Yeni öğrenci kaydı: Ahmet Yılmaz',
-            time: '2 saat önce',
-            icon: FaUsers,
-            color: 'text-blue-500'
-          },
-          {
-            id: 2,
-            type: 'blog',
-            message: 'Yeni blog yazısı yayınlandı: "React Hooks"',
-            time: '4 saat önce',
-            icon: FaNewspaper,
-            color: 'text-green-500'
-          },
-          {
-            id: 3,
-            type: 'course',
-            message: 'JavaScript kursu güncellendi',
-            time: '1 gün önce',
-            icon: FaBook,
-            color: 'text-purple-500'
-          },
-          {
-            id: 4,
-            type: 'view',
-            message: 'Site ziyaretçi sayısı 1000\'i aştı',
-            time: '2 gün önce',
-            icon: FaEye,
-            color: 'text-orange-500'
-          }
-        ];
-
-        setStats(mockStats);
-        setRecentActivities(mockActivities);
-      } catch (error) {
-        console.error('İstatistikler yüklenirken hata:', error);
-        // Hata durumunda mock data kullan
-        const mockStats = {
-          totalStudents: 156,
-          totalCourses: 0,
-          totalBlogs: 24,
-          totalViews: 2847
-        };
-        setStats(mockStats);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchStats();
   }, []);
 
@@ -103,8 +167,8 @@ const DashboardPage = () => {
       icon: FaUsers,
       color: 'text-blue-600',
       bgColor: 'bg-blue-50',
-      change: '+12%',
-      changeType: 'positive'
+      change: stats.studentGrowthRate > 0 ? `+${stats.studentGrowthRate}%` : `${stats.studentGrowthRate}%`,
+      changeType: stats.studentGrowthRate >= 0 ? 'positive' : 'negative'
     },
     {
       title: 'Aktif Kurslar',
@@ -243,15 +307,26 @@ const DashboardPage = () => {
 
         {/* Son Aktiviteler */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">Son Aktiviteler</h2>
-          <div className="space-y-4">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-semibold text-gray-900">Son Aktiviteler</h2>
+            {hasNewActivity && (
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="text-sm text-green-600 font-medium">Yeni!</span>
+              </div>
+            )}
+          </div>
+          <div className="max-h-80 overflow-y-auto space-y-4 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
             {recentActivities.map((activity) => (
               <div key={activity.id} className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50">
                 <div className={`${activity.bgColor} p-2 rounded-lg`}>
                   <activity.icon className={`h-4 w-4 ${activity.color}`} />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm text-gray-900">{activity.message}</p>
+                  <p 
+                    className="text-sm text-gray-900"
+                    dangerouslySetInnerHTML={{ __html: activity.message }}
+                  ></p>
                   <p className="text-xs text-gray-500 mt-1">{activity.time}</p>
                 </div>
               </div>
@@ -285,7 +360,7 @@ const DashboardPage = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-600 text-sm font-medium">Toplam Öğrenci</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">156</p>
+              <p className="text-2xl font-bold text-gray-900 mt-1">{stats.totalStudents}</p>
             </div>
             <FaUsers className="h-8 w-8 text-purple-500" />
           </div>

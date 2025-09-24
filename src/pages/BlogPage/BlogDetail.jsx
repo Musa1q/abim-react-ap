@@ -1,13 +1,43 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { FaArrowLeft, FaClock, FaUser, FaCalendar, FaTag } from 'react-icons/fa';
-import { blogData } from '../../data/mockBlog';
+import { getBlogById } from '../../services/blogService';
+import DOMPurify from 'dompurify';
 
 const BlogDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const blog = blogData.find(b => b.id === id);
+  const [blog, setBlog] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (id) {
+      fetchBlog();
+    }
+  }, [id]);
+
+  const fetchBlog = async () => {
+    try {
+      const blogData = await getBlogById(id);
+      setBlog(blogData);
+    } catch (error) {
+      console.error('Blog yüklenirken hata:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <p className="mt-4 text-gray-600">Blog yükleniyor...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!blog) {
     return (
@@ -36,7 +66,7 @@ const BlogDetail = () => {
         {/* Hero Section */}
         <div className="relative h-[400px]">
           <img
-            src={blog.imageUrl}
+            src={blog.imageUrl || blog.image_url}
             alt={blog.title}
             className="w-full h-full object-cover"
           />
@@ -57,7 +87,7 @@ const BlogDetail = () => {
                 </div>
                 <div className="flex items-center">
                   <FaCalendar className="mr-2" />
-                  <span>{blog.date}</span>
+                  <span>{new Date(blog.published_at).toLocaleDateString('tr-TR')}</span>
                 </div>
                 <div className="flex items-center">
                   <FaClock className="mr-2" />
@@ -80,9 +110,18 @@ const BlogDetail = () => {
                 <p className="text-xl text-gray-600 mb-8 font-medium">
                   {blog.summary}
                 </p>
-                <div className="whitespace-pre-line text-gray-700">
-                  {blog.content}
-                </div>
+                <div 
+                  className="text-gray-700 prose prose-lg max-w-none"
+                  style={{
+                    '--tw-prose-headings': '#1f2937',
+                    '--tw-prose-h1': '2rem',
+                    '--tw-prose-h2': '1.75rem',
+                    '--tw-prose-h3': '1.5rem',
+                  }}
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(`<p>${blog.content || ''}</p>`)
+                  }}
+                />
               </div>
             </div>
           </div>

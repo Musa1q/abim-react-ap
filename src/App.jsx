@@ -25,6 +25,7 @@ import BlogManagement from "./pages/AdminPage/BlogManagement";
 import BlogEditPage from "./pages/AdminPage/BlogEditPage";
 import CourseManagement from "./pages/AdminPage/CourseManagement";
 import CourseEditPage from "./pages/AdminPage/CourseEditPage";
+import CourseApplicationManagement from "./pages/AdminPage/CourseApplicationManagement";
 import BannerManagement from "./pages/AdminPage/BannerManagement";
 // import AboutManagement from "./pages/AdminPage/AboutManagement";
 // import AboutEditPage from "./pages/AdminPage/AboutEditPage";
@@ -94,6 +95,7 @@ function App() {
           <Route path="courses" element={<CourseManagement />} />
           <Route path="courses/new" element={<CourseEditPage />} />
           <Route path="courses/edit/:id" element={<CourseEditPage />} />
+          <Route path="applications" element={<CourseApplicationManagement />} />
           <Route path="banner" element={<BannerManagement />} />
           {/* <Route path="youtube" element={<YouTubeManagement />} />
           <Route path="youtube/new" element={<YouTubeEditPage />} />

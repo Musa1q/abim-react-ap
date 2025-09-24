@@ -34,7 +34,15 @@ const BlogEditPage = () => {
       setIsLoading(true);
       const blog = await getBlogById(id);
       if (blog) {
-        setFormData(blog);
+        setFormData({
+          title: blog.title,
+          content: blog.content,
+          summary: blog.summary,
+          author: blog.author,
+          category: blog.category,
+          imageUrl: blog.image_url || blog.imageUrl,
+          readTime: blog.read_time || blog.readTime
+        });
       }
     } catch (error) {
       console.error('Blog yüklenirken hata:', error);
@@ -57,8 +65,7 @@ const BlogEditPage = () => {
     try {
       setIsLoading(true);
       setError('');
-      const path = `blogs/${Date.now()}_${file.name}`;
-      const imageUrl = await uploadImage(file, path);
+      const imageUrl = await uploadImage(file, 'courses');
       setFormData({ ...formData, imageUrl });
     } catch (error) {
       console.error('Resim yükleme hatası:', error);
@@ -80,10 +87,21 @@ const BlogEditPage = () => {
       setIsSaving(true);
       setError('');
       
+      // Backend için veri formatını düzenle
+      const blogData = {
+        title: formData.title,
+        content: formData.content,
+        summary: formData.summary,
+        author: formData.author,
+        category: formData.category,
+        imageUrl: formData.imageUrl,
+        readTime: formData.readTime
+      };
+
       if (isEdit) {
-        await updateBlog(id, formData);
+        await updateBlog(id, blogData);
       } else {
-        await addBlog(formData);
+        await addBlog(blogData);
       }
       
       navigate('/admin/blog');

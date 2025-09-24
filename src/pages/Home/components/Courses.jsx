@@ -1,8 +1,27 @@
 import { Link } from 'react-router-dom';
 import { FaDesktop, FaPython, FaMobile, FaArrowRight } from 'react-icons/fa';
-import { coursesData } from '../../../data/mockCourses';
+import { getCourses } from '../../../services/courseService';
+import { useState, useEffect } from 'react';
 
 const Courses = () => {
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchCourses();
+  }, []);
+
+  const fetchCourses = async () => {
+    try {
+      const coursesData = await getCourses();
+      setCourses(coursesData);
+    } catch (error) {
+      console.error('Kurslar yüklenirken hata:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
@@ -11,8 +30,13 @@ const Courses = () => {
           <p className="text-gray-600">Kariyerine yön verecek eğitimler</p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {coursesData.map((course) => (
+        {loading ? (
+          <div className="text-center py-8">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {courses.map((course) => (
             <div 
               key={course.id}
               className="group bg-white rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-1 transition-all duration-300"
@@ -58,7 +82,8 @@ const Courses = () => {
               </div>
             </div>
           ))}
-        </div>
+          </div>
+        )}
 
         <div className="text-center mt-12">
           <Link 

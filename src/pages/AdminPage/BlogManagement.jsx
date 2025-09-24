@@ -136,7 +136,7 @@ const BlogManagement = () => {
                     <td className="px-4 py-4">
                       <div className="flex items-center">
                         <img
-                          src={blog.imageUrl}
+                          src={blog.image_url || blog.imageUrl}
                           alt={blog.title}
                           className="h-10 w-10 rounded-lg object-cover flex-shrink-0"
                         />
@@ -159,7 +159,7 @@ const BlogManagement = () => {
                       </span>
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {new Date(blog.createdAt).toLocaleDateString('tr-TR')}
+                      {new Date(blog.created_at || blog.createdAt).toLocaleDateString('tr-TR')}
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <button

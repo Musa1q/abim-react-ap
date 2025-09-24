@@ -1,10 +1,25 @@
-# Linguist overrides
-backend/* linguist-language=JavaScript
-backend/server.js linguist-language=JavaScript
+# Linguist overrides - Force language detection
+backend/database_schema.sql linguist-language=SQL
+backend/courses_database.sql linguist-language=SQL
+*.sql linguist-language=SQL
+
+# JSON files
+package.json linguist-language=JSON
+package-lock.json linguist-language=JSON
 backend/package.json linguist-language=JSON
 backend/package-lock.json linguist-language=JSON
-backend/*.sql linguist-language=SQL
-*.sql linguist-language=SQL
+
+# CSS files
+src/index.css linguist-language=CSS
+*.css linguist-language=CSS
+
+# HTML files
+index.html linguist-language=HTML
+*.html linguist-language=HTML
+
+# Markdown files
+README.md linguist-language=Markdown
+*.md linguist-language=Markdown
 
 # Database files
 *.sql linguist-language=SQL

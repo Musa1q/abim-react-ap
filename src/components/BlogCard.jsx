@@ -11,7 +11,7 @@ const BlogCard = ({ blog }) => {
     <div className="group bg-white rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-1 transition-all duration-300 flex flex-col">
       <div className="relative">
         <img
-          src={blog.imageUrl}
+          src={blog.imageUrl || blog.image_url}
           alt={blog.title}
           className="w-full h-48 object-cover transform group-hover:scale-105 transition-transform duration-300"
         />

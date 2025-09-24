@@ -9,7 +9,8 @@ import {
   FaTimes,
   FaImages,
   FaInfoCircle,
-  FaYoutube
+  FaYoutube,
+  FaUsers
 } from 'react-icons/fa';
 
 // Bu fonksiyon gerçek bir auth kontrolü yapmalı
@@ -70,6 +71,7 @@ const AdminLayout = () => {
     { path: '/admin/dashboard', icon: <FaTachometerAlt />, text: 'Dashboard' },
     { path: '/admin/courses', icon: <FaBook />, text: 'Eğitimler' },
     { path: '/admin/blog', icon: <FaNewspaper />, text: 'Blog Yazıları' },
+    { path: '/admin/applications', icon: <FaUsers />, text: 'Kurs Başvuruları' },
     { path: '/admin/youtube', icon: <FaYoutube />, text: 'YouTube', disabled: true },
     { path: '/admin/banner', icon: <FaImages />, text: 'Banner Yönetimi' },
     { path: '/admin/about', icon: <FaInfoCircle />, text: 'Hakkımızda', disabled: true },
