@@ -1,0 +1,34 @@
+# Linguist overrides
+backend/* linguist-language=JavaScript
+backend/server.js linguist-language=JavaScript
+backend/package.json linguist-language=JSON
+backend/package-lock.json linguist-language=JSON
+backend/*.sql linguist-language=SQL
+*.sql linguist-language=SQL
+
+# Database files
+*.sql linguist-language=SQL
+database_schema.sql linguist-language=SQL
+courses_database.sql linguist-language=SQL
+
+# Config files
+*.json linguist-language=JSON
+package.json linguist-language=JSON
+package-lock.json linguist-language=JSON
+
+# Markdown
+*.md linguist-language=Markdown
+README.md linguist-language=Markdown
+
+# CSS
+*.css linguist-language=CSS
+src/index.css linguist-language=CSS
+
+# HTML
+*.html linguist-language=HTML
+index.html linguist-language=HTML
+
+# Ignore large files
+node_modules/ linguist-vendored
+dist/ linguist-vendored
+*.log linguist-vendored

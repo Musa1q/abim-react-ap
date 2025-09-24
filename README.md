@@ -15,9 +15,15 @@ Modern React teknolojileri kullanılarak geliştirilmiş, tam özellikli bir der
 - **Node.js** - Server-side JavaScript
 - **Express.js** - Web framework
 - **MySQL** - Veritabanı yönetimi
+- **SQL** - Veritabanı sorgu dili
 - **Multer** - Dosya yükleme
 - **Nodemailer** - E-posta gönderimi
 - **bcryptjs** - Şifre şifreleme
+
+### Database
+- **MySQL** - İlişkisel veritabanı
+- **SQL** - Veritabanı sorgu dili
+- **Database Schema** - Normalized design
 
 ### Admin Paneli
 - **Dashboard** - İstatistikler ve hızlı erişim
