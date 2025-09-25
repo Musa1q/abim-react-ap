@@ -162,9 +162,8 @@ Bu proje MIT lisansı altında lisanslanmıştır.
 
 ## 👨‍💻 Geliştirici
 
+**Musa Ali Güçlü**
 **Emrullah Çalışkan**
-- GitHub: [@kullaniciadi](https://github.com/kullaniciadi)
-- LinkedIn: [Emrullah Çalışkan](https://linkedin.com/in/emrullah-caliskan)
 
 ## 🤝 Katkıda Bulunma
 
@@ -174,12 +173,3 @@ Bu proje MIT lisansı altında lisanslanmıştır.
 4. Push yapın (`git push origin feature/AmazingFeature`)
 5. Pull Request oluşturun
 
-## 📞 İletişim
-
-Proje hakkında sorularınız için:
-- E-posta: emrullah@abim.com
-- Website: [abim.com](https://abim.com)
-
----
-
-⭐ Bu projeyi beğendiyseniz yıldız vermeyi unutmayın!
